@@ -1,0 +1,242 @@
+/** general definitions **/
+
+* {
+  border: 0px;
+  margin: 0px;
+  padding: 0px;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font: 13px "Lucida Grande",Tahoma,Verdana,Arial,sans-serif;
+  color: #666666;
+  background-color: #ffffff;
+  overflow: auto;
+}
+
+div {
+  position: relative; /* needed for shadow */
+  margin: auto;
+}
+
+label {
+  width: 240px;
+  display: block; 
+  padding-left: 0px;
+  padding-bottom: 2px;
+  color: #000000;
+}
+
+input, textarea {
+  padding-left: 3px;
+}
+
+a:link, a:visited, a:active {
+  color: #0b5c26;
+  -color:#192f16;
+  text-decoration:none;
+}
+a:hover, a:active {
+  text-decoration:underline;
+}
+
+input.button {
+  padding: 2px 5px;
+  color: #ffffff;
+  -background-color: #def4e0;
+  background-color: #5fc82b;
+  -border:6px solid #ddd;
+  font: 13px;
+}
+
+.checkbox-label {
+    white-space: nowrap;
+}
+
+.checkbox-label > span {
+    white-space: wrap;
+}
+
+h4 {
+    font-size: 13px;
+}
+
+/** header definitions **/
+
+div#header {
+  height: 10%;
+  min-height: 70px;
+  border-bottom: 1px solid #888888;
+  z-index: 5;
+  overflow: hidden;
+  filter:Shadow(color=#888888, direction=180);
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25), -4px 4px 4px rgba(0, 0, 0, 0.25);
+  -webkit-box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25), -4px 4px 4px rgba(0, 0, 0, 0.25);
+  -moz-box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25), -4px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+div#header_logo {
+  font-size: 15px;
+  margin: 2px 0px 0px 10px;
+  float: left;
+}
+
+div#header_nav {
+  margin: 50px 20px 0px 0px;
+  color: #Ob5c26;
+  float: right;
+}
+
+div#header_nav a:link, div#header_nav a:visited {
+  text-decoration:none;
+}
+
+div#header_nav a:hover {
+  text-decoration:underline;
+}
+
+
+/** data input definitions **/
+
+div#data_input {
+  float: left;
+  height: 90%;
+  overflow: auto;
+  z-index: 3;
+  border-right: 1px solid #888888;
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25), -4px 4px 4px rgba(0, 0, 0, 0.25);
+  -webkit-box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25), -4px 4px 4px rgba(0, 0, 0, 0.25);
+  -moz-box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25), -4px 4px 4px rgba(0, 0, 0, 0.25);
+  padding-left: 15px;
+}
+
+div#t_input{
+  padding: 1em 0em 0em 0em;
+  text-align: right;
+}
+
+div#t_route_range{
+	padding: 1em 1em 1em 1em;
+ 	text-align: left;
+}
+
+div#route_input, div#range_input {
+  //margin-top: 11px;
+  //margin-left: 15px;
+  vertical-align: middle;
+  font-size: 11px;
+  margin-bottom: 10px;	
+  color: #000000;
+  padding-bottom: 2px;
+}
+
+input.inputfield {
+  border: 1px solid #c6c6c6;
+}
+
+div > input.if_long {
+  width: 190px;
+}
+
+div#route_start, div#route_dest, div#range_address {
+  margin: 20px 0;
+}
+
+a#add_step {
+  display: block;
+  font-size: 11px;
+  margin-right: 20px;
+  margin-bottom: 10px;
+}
+
+div#steps > div {
+  margin-bottom: 10px;
+}
+
+div#options {
+  font-size: 11px;
+  margin-bottom: 10px;	
+  color: #000000;
+  padding-bottom: 2px;
+}
+
+div#route_details {
+  display: none;
+  margin: 10px 10px 10px 0;
+}
+
+span.details {
+  color: #000000;
+}
+
+/** div for directions **/
+div#directions {
+    margin-right: 10px;
+}
+
+/** loading div **/
+div#loading {
+  background-color: #13FF37;
+  display: none;
+  margin: 0 10px;
+}
+
+
+/** error div **/
+div#error {
+  color: #FF0000;
+  height: 1em;
+  margin: 0 10px;
+  display: none;
+}
+
+/** log div **/
+div#log {
+    color: #030303;
+    margin: 2px 2px;
+    border: solid medium #00ff00;
+}
+
+/** map definitions **/
+
+div#map {
+  height: 90%;
+  width: auto;
+}
+
+/* dialogs */
+
+div#bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 0;
+  display:none;
+  z-index: 10;
+  background-color: #c6c6c6;
+}
+
+.dialog {
+  position: absolute;
+  width: 640px;
+  height: 480px;
+  display: none;
+  z-index: 20;
+  background-color: #FFFFFF;
+  padding: 1em;
+}
+
+.dialog > ul {
+  margin-left: 15px;
+}
+
+.close_dialog {
+  float: right;
+}
+
+.direction {
+    text-decoration: dashed;
+}
