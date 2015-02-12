@@ -20,13 +20,10 @@
 	</properties>
 
 	<modules>
-		<module>Model</module>
-		<module>OsmosisPlugin</module>
+		<module>Routing</module>
 		<module>WebService</module>
 		<module>GoogleFrontend</module>
-		<module>MapViewer</module>
 		<module>Visualization</module>
-		<module>Config</module>
 	</modules>
 
 	<dependencies>
