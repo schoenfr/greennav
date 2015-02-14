@@ -57,7 +57,6 @@ public class ObservedQueueFactory<K, V> implements
 	public IPartialPreorderQueue<K, V> createEmpty(IPartialPreorder<V> preorder) {
 		ObservedQueue<K, V> res = new ObservedQueue<K, V>(
 				base.createEmpty(preorder));
-		System.out.println("observedqueuefactory 60: observing queue");
 		res.addObserver(this);
 		return res;
 	}
@@ -66,7 +65,6 @@ public class ObservedQueueFactory<K, V> implements
 	public IPartialPreorderQueue<K, V> createEmpty(ITotalPreorder<V> preorder) {
 		ObservedQueue<K, V> res = new ObservedQueue<K, V>(
 				base.createEmpty(preorder));
-		System.out.println("observedqueuefactory 69: observing queue");
 		res.addObserver(this);
 		return res;
 	}
