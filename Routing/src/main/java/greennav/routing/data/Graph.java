@@ -154,22 +154,22 @@ public class Graph {
 			prev = v;
 		}
 		System.out.println("edges indexed");
-		Iterator<Vertex> ite = vertices.iterator();
-		while (ite.hasNext()) {
-			Vertex v = ite.next();
-			if (v.edges == 0)
-				ite.remove();
-		}
-		System.out.println("unnecessary vertices removed");
-		index = 0;
-		for (Vertex v : vertices) {
-			v.index = index;
-			index++;
-		}
-		System.out.println("vertices indexed");
+		// Iterator<Vertex> ite = vertices.iterator();
+		// while (ite.hasNext()) {
+		// Vertex v = ite.next();
+		// if (v.edges == 0)
+		// ite.remove();
+		// }
+		// System.out.println("unnecessary vertices removed");
+		// index = 0;
+		// for (Vertex v : vertices) {
+		// v.index = index;
+		// index++;
+		// }
+		// System.out.println("vertices indexed");
 		System.gc();
-		System.out.println("graph now contains " + vertices.size()
-				+ " vertices and " + edges.size() + " edges");
+		// System.out.println("graph now contains " + vertices.size()
+		// + " vertices and " + edges.size() + " edges");
 	}
 
 	public Vertex getVertexByLatLon(double lat, double lon) {

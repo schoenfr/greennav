@@ -43,13 +43,13 @@ public class VehicleTypeList {
 	 * 
 	 * @throws Exception
 	 */
-	public static VehicleTypeList init() throws Exception {
+	public static VehicleTypeList init(String vehicleFile) throws Exception {
 		VehicleTypeList list = new VehicleTypeList();
 		Document doc = null;
 		try {
 			DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
-			doc = docBuilder.parse("vehicles.xml");
+			doc = docBuilder.parse(vehicleFile);
 		} catch (ParserConfigurationException e) {
 			throw new Exception(
 					"Reading of vehicleTypes XML could no be executed (1).", e);

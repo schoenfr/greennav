@@ -38,10 +38,35 @@ public class OSMReader {
 				pipeArgs, taskArgs, null);
 		tasks.add(read);
 
+		// Filter highways
+		pipeArgs = new HashMap<>();
+		taskArgs = new HashMap<>();
+		taskArgs.put(
+				"highway",
+				"motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,secondary_link,tertiary,tertiary_link,unclassified,living_street,residential");
+
+		TaskConfiguration tf1 = new TaskConfiguration("2", "tag-filter",
+				pipeArgs, taskArgs, "accept-ways");
+		tasks.add(tf1);
+
+		// Reject relations highways
+		pipeArgs = new HashMap<>();
+		taskArgs = new HashMap<>();
+		TaskConfiguration tf2 = new TaskConfiguration("3", "tag-filter",
+				pipeArgs, taskArgs, "reject-relations");
+		tasks.add(tf2);
+
+		// Reject relations highways
+		pipeArgs = new HashMap<>();
+		taskArgs = new HashMap<>();
+		TaskConfiguration usednode = new TaskConfiguration("4", "used-node",
+				pipeArgs, taskArgs, null);
+		tasks.add(usednode);
+
 		// Extraction task
 		pipeArgs = new HashMap<>();
 		taskArgs = new HashMap<>();
-		TaskConfiguration extract = new TaskConfiguration("2", "extract",
+		TaskConfiguration extract = new TaskConfiguration("5", "extract",
 				pipeArgs, taskArgs, null);
 		tasks.add(extract);
 
@@ -52,8 +77,8 @@ public class OSMReader {
 
 		System.gc();
 
-		Extractor f = (Extractor) tr.getFactoryRegister().getInstance("extract");
+		Extractor f = (Extractor) tr.getFactoryRegister()
+				.getInstance("extract");
 		return f.getGraph();
 	}
-
 }

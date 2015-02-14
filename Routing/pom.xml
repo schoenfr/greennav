@@ -25,6 +25,11 @@
 			<version>0.43-RELEASE</version>
 		</dependency>
 		<dependency>
+			<groupId>org.openstreetmap.osmosis</groupId>
+			<artifactId>osmosis-tagfilter</artifactId>
+			<version>0.43-RELEASE</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
 			<version>${org.springframework.version}</version>
@@ -42,7 +47,7 @@
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>1.4</version>
+			<version>1.6</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
