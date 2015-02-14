@@ -1,13 +1,13 @@
 package greennav.routing.server;
 
 import greennav.routing.algorithms.Dijkstra;
-import greennav.routing.algorithms.QueueFactory;
 import greennav.routing.data.Graph;
 import greennav.routing.data.Graph.Vertex;
 import greennav.routing.data.OSMReader;
 import greennav.routing.data.path.IPath;
 import greennav.routing.data.vehicle.Vehicle;
 import greennav.routing.data.vehicle.VehicleTypeList;
+import greennav.routing.queue.PartialPreorderTreeFactory;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -57,7 +57,8 @@ public class Server {
 		Vertex x = graph.getVertexByID(from);
 		Vertex y = graph.getVertexByID(to);
 		// TODO: Consider parameters
-		return new Dijkstra(graph, QueueFactory.getDefault()).route(x, y);
+		return new Dijkstra(graph,
+				new PartialPreorderTreeFactory<Vertex, Double>()).route(x, y);
 	}
 
 	public Object range(Vehicle v, double battery, long from) {

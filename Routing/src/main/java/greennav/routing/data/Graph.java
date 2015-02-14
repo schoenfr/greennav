@@ -187,12 +187,7 @@ public class Graph {
 
 	public Iterator<Edge> edgeIterator(final Vertex v) {
 		final int from = v.edgeIndex;
-		int to1 = edges.size();
-		if (v != vertices.getLast()) {
-			Vertex v2 = vertices.get(v.index + 1);
-			to1 = v2.edgeIndex;
-		}
-		final int to = to1;
+		final int to = v.edgeIndex + v.edges;
 		return new Iterator<Edge>() {
 			int i = from;
 

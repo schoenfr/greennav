@@ -1,5 +1,4 @@
-package greennav.visualization.model;
-
+package greennav.routing.queue;
 
 /**
  * Observers of this type recognize manipulations on partial preorder queues,
@@ -50,5 +49,5 @@ public interface QueueObserver {
 	 * @param queue
 	 *            The queue.
 	 */
-	public void failed(Object queue);
+	public void failed(IPartialPreorderQueue<?, ?> queue);
 }

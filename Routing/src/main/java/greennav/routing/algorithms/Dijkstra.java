@@ -5,14 +5,16 @@ import greennav.routing.data.Graph.Edge;
 import greennav.routing.data.Graph.Vertex;
 import greennav.routing.data.path.IPath;
 import greennav.routing.data.path.VertexList;
+import greennav.routing.queue.AbstractTotalPreorder;
+import greennav.routing.queue.ITotalPreorderQueue;
+import greennav.routing.queue.ITotalPreorderQueueFactory;
+import greennav.routing.queue.Pair;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 
 /**
  * This is Dijkstra's algorithm.
@@ -21,9 +23,12 @@ public class Dijkstra {
 
 	private Graph graph;
 
-	private QueueFactory qf;
+	private ITotalPreorderQueueFactory<Vertex, Double, ? extends ITotalPreorderQueue<Vertex, Double>> qf;
+	private ITotalPreorderQueue<Vertex, Double> q;
 
-	public Dijkstra(Graph graph, QueueFactory qf) {
+	public Dijkstra(
+			Graph graph,
+			ITotalPreorderQueueFactory<Vertex, Double, ? extends ITotalPreorderQueue<Vertex, Double>> qf) {
 		this.graph = graph;
 		this.qf = qf;
 	}
@@ -37,38 +42,20 @@ public class Dijkstra {
 		dist.put(to, Double.POSITIVE_INFINITY);
 		dist.put(from, 0.0);
 
-		PriorityQueue<Vertex> q = qf.createQueue(new Comparator<Vertex>() {
+		q = qf.createEmpty(new AbstractTotalPreorder<Double>() {
 			@Override
-			public int compare(Vertex o1, Vertex o2) {
-				Double d1 = dist.get(o1);
-				if (d1 == null)
-					d1 = Double.POSITIVE_INFINITY;
-				Double d2 = dist.get(o2);
-				if (d2 == null)
-					d2 = Double.POSITIVE_INFINITY;
-				return (int) Math.signum(d1 - d2);
+			public boolean lessEqual(Double a, Double b) {
+				return a <= b;
 			}
 		});
 
-		q.add(from);
-
-		int i = 0;
+		q.insert(from, 0.0);
 
 		while (!q.isEmpty()) {
 
-			Vertex a = q.poll();
-			double da = dist.get(a);
-
-			if (i++ % 500 == 0) {
-				System.out.println(da + " --- " + q.size());
-				Iterator<Vertex> it = q.iterator();
-				double av = 0;
-				while (it.hasNext()) {
-					Vertex bla = it.next();
-					av += dist.get(bla);
-				}
-				System.out.println(av / q.size());
-			}
+			Pair<Vertex, Double> pair = q.pull();
+			Vertex a = pair.getFirst();
+			double da = pair.getSecond();
 
 			if (da >= dist.get(to))
 				break;
@@ -77,23 +64,16 @@ public class Dijkstra {
 			while (it.hasNext()) {
 
 				Edge e = it.next();
-
-				if (e.getFrom() != a) {
-					throw new RuntimeException("passt nicht");
-				}
 				Vertex b = e.getTo();
-
 				double cost = e.getCosts();
-
 				double db = Double.POSITIVE_INFINITY;
 				if (dist.containsKey(b))
 					db = dist.get(b);
 
 				if (da + cost < db) {
-					q.remove(b);
-					dist.put(b, da + cost);
 					pred.put(b, a);
-					q.add(b);
+					dist.put(b, da + cost);
+					q.insert(b, da + cost);
 				}
 
 			}

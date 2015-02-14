@@ -1,12 +1,15 @@
 package greennav.visualization.model;
 
-import greennav.model.datastructures.partialpreorderqueue.IPartialPreorderQueue;
-import greennav.model.modelling.order.IQueue;
 import greennav.routing.algorithms.Dijkstra;
-import greennav.routing.algorithms.QueueFactory;
 import greennav.routing.data.Graph.Vertex;
 import greennav.routing.data.path.IPath;
 import greennav.routing.data.vehicle.Vehicle;
+import greennav.routing.queue.IPartialPreorderQueue;
+import greennav.routing.queue.IPartialPreorderQueueFactory;
+import greennav.routing.queue.IQueue;
+import greennav.routing.queue.ObservedQueueFactory;
+import greennav.routing.queue.PartialPreorderTreeFactory;
+import greennav.routing.queue.QueueObserver;
 import greennav.routing.server.Server;
 import greennav.visualization.data.TraceEvent;
 import greennav.visualization.data.TraceEvent.PathFoundEvent;
@@ -93,11 +96,12 @@ public class RoutingRunner extends Gobservable<TraceObserver> implements
 		this.vehicle = vehicle;
 	}
 
-	@SuppressWarnings("unchecked")
-	private QueueFactory redecorate(QueueFactory qf) {
-		ObservedQueueFactory x = new ObservedQueueFactory(qf);
+	private IPartialPreorderQueueFactory<Vertex, Double, ? extends IPartialPreorderQueue<Vertex, Double>> redecorate(
+			IPartialPreorderQueueFactory<Vertex, Double, ? extends IPartialPreorderQueue<Vertex, Double>> qf) {
+		ObservedQueueFactory<Vertex, Double> x = new ObservedQueueFactory<Vertex, Double>(
+				qf);
 		x.addObserver(this);
-		return qf;
+		return x;
 	}
 
 	/**
@@ -110,7 +114,7 @@ public class RoutingRunner extends Gobservable<TraceObserver> implements
 		TraceEvent event;
 		queueLabeling.clear();
 
-		QueueFactory qf = QueueFactory.getDefault();
+		IPartialPreorderQueueFactory<Vertex, Double, ? extends IPartialPreorderQueue<Vertex, Double>> qf = (IPartialPreorderQueueFactory<Vertex, Double, ? extends IPartialPreorderQueue<Vertex, Double>>) new PartialPreorderTreeFactory<Vertex, Double>();
 
 		qf = redecorate(qf);
 
@@ -133,8 +137,7 @@ public class RoutingRunner extends Gobservable<TraceObserver> implements
 	}
 
 	@Override
-	public void failed(Object queue) {
-		// TODO Auto-generated method stub
+	public void failed(greennav.routing.queue.IPartialPreorderQueue<?, ?> queue) {
 
 	}
 
