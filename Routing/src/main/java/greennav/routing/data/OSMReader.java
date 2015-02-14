@@ -1,11 +1,13 @@
 package greennav.routing.data;
 
+import greennav.routing.data.osmosis.Extractor;
+import greennav.routing.data.osmosis.Plugin;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.java.plugin.Plugin;
 import org.openstreetmap.osmosis.core.TaskRegistrar;
 import org.openstreetmap.osmosis.core.pipeline.common.Pipeline;
 import org.openstreetmap.osmosis.core.pipeline.common.TaskConfiguration;
@@ -16,7 +18,7 @@ import org.openstreetmap.osmosis.core.pipeline.common.TaskConfiguration;
  */
 public class OSMReader {
 
-	public void readOSM(String osmSource) {
+	public Graph readOSM(String osmSource) {
 
 		// Add the plugin to Osmosis
 		List<String> plugins = new LinkedList<>();
@@ -50,6 +52,8 @@ public class OSMReader {
 
 		System.gc();
 
+		Extractor f = (Extractor) tr.getFactoryRegister().getInstance("extract");
+		return f.getGraph();
 	}
 
 }
