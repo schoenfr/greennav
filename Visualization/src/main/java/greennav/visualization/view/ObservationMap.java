@@ -6,7 +6,8 @@ import greennav.mapviewer.shapes.MapShape;
 import greennav.mapviewer.shapes.MapShapeList;
 import greennav.mapviewer.shapes.Marker;
 import greennav.mapviewer.shapes.StartMarker;
-import greennav.model.data.structs.ENGVertex;
+import greennav.osmosis.structs.LatLon;
+import greennav.routing.data.Graph.Vertex;
 import greennav.visualization.data.TraceEvent;
 import greennav.visualization.data.TraceEvent.PathFoundEvent;
 import greennav.visualization.data.TraceEvent.SearchStartedEvent;
@@ -80,7 +81,7 @@ public class ObservationMap extends JMapViewer implements TraceObserver {
 	 */
 	private List<MapShape> independentRouteMapShapes = new ArrayList<MapShape>();
 
-	HashMap<ENGVertex, Marker> queueMirror = new HashMap<>();
+	HashMap<Vertex, Marker> queueMirror = new HashMap<>();
 
 	private static final Color[] colors = new Color[] { Color.BLUE,
 			Color.GREEN, Color.CYAN, Color.MAGENTA };
@@ -102,14 +103,16 @@ public class ObservationMap extends JMapViewer implements TraceObserver {
 						path.clear();
 					} else if (message instanceof VertexVisitedEvent) {
 						VertexVisitedEvent event = (VertexVisitedEvent) message;
-						shapes.add(new VertexMarker(event.getVertex()
-								.getCoordinate().getLatLon(), Color.BLACK, 2));
+						shapes.add(new VertexMarker(new LatLon(event
+								.getVertex().getLat(), event.getVertex()
+								.getLon()), Color.BLACK, 2));
 						shapes.cursorForward();
 						queue.remove(queueMirror.remove(event.getVertex()));
 					} else if (message instanceof VertexEnqueuedEvent) {
 						VertexEnqueuedEvent event = (VertexEnqueuedEvent) message;
-						Marker m = new Marker(event.getVertex().getCoordinate()
-								.getLatLon(), colors[event.getQueue()]);
+						Marker m = new Marker(new LatLon(event.getVertex()
+								.getLat(), event.getVertex().getLon()),
+								colors[event.getQueue()]);
 						if (!queueMirror.containsKey(event.getVertex())) {
 							queueMirror.put(event.getVertex(), m);
 							queue.add(m);
@@ -118,10 +121,10 @@ public class ObservationMap extends JMapViewer implements TraceObserver {
 						PathFoundEvent event = (PathFoundEvent) message;
 						if (event.getPath() != null) {
 							routeLineShapes.clear();
-							for (ENGVertex vertex : event.getPath()
-									.toVertexList()) {
-								Marker m = new Marker(vertex.getCoordinate()
-										.getLatLon(), Color.BLACK);
+							for (Vertex vertex : event.getPath().toVertexList()) {
+								Marker m = new Marker(new LatLon(vertex
+										.getLat(), vertex.getLon()),
+										Color.BLACK);
 								routeLineShapes.add(m);
 							}
 							showRoute(true);
@@ -165,8 +168,8 @@ public class ObservationMap extends JMapViewer implements TraceObserver {
 	 * Displays marker for start and destination.
 	 */
 	public void checkEndMarker() {
-		ENGVertex start = parent.getModel().getStart();
-		ENGVertex destination = parent.getModel().getDestination();
+		Vertex start = parent.getModel().getStart();
+		Vertex destination = parent.getModel().getDestination();
 		if (start == null) {
 			// No start defined, so maybe delete the marker
 			if (startNode != null) {
@@ -176,11 +179,13 @@ public class ObservationMap extends JMapViewer implements TraceObserver {
 		} else {
 			// Start defined, so maybe add or update the marker
 			if (startNode != null) {
-				startNode.setStartMarker(start.getCoordinate().getLatLon(),
-						Color.black);
+				startNode
+						.setStartMarker(
+								new LatLon(start.getLat(), start.getLon()),
+								Color.black);
 			} else {
-				startNode = new StartMarker(start.getCoordinate().getLatLon(),
-						Color.black);
+				startNode = new StartMarker(new LatLon(start.getLat(),
+						start.getLon()), Color.black);
 				getMapShapes().add(startNode);
 			}
 		}
@@ -193,11 +198,13 @@ public class ObservationMap extends JMapViewer implements TraceObserver {
 		} else {
 			// Start defined, so maybe add or update the marker
 			if (destinationNode != null) {
-				destinationNode.setDestinationMarker(destination
-						.getCoordinate().getLatLon(), Color.black);
+				destinationNode.setDestinationMarker(
+						new LatLon(destination.getLat(), destination.getLon()),
+						Color.black);
 			} else {
-				destinationNode = new DestinationMarker(destination
-						.getCoordinate().getLatLon(), Color.black);
+				destinationNode = new DestinationMarker(new LatLon(
+						destination.getLat(), destination.getLon()),
+						Color.black);
 				getMapShapes().add(destinationNode);
 			}
 		}
@@ -239,7 +246,7 @@ public class ObservationMap extends JMapViewer implements TraceObserver {
 		return queue;
 	}
 
-	public HashMap<ENGVertex, Marker> getQueueMirror() {
+	public HashMap<Vertex, Marker> getQueueMirror() {
 		return queueMirror;
 	}
 }

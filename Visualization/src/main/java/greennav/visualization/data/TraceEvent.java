@@ -1,8 +1,8 @@
 package greennav.visualization.data;
 
-import greennav.model.data.structs.ENGVertex;
-import greennav.model.data.structs.Vehicle;
-import greennav.model.modelling.graph.IPath;
+import greennav.routing.data.Graph.Vertex;
+import greennav.routing.data.path.IPath;
+import greennav.routing.data.vehicle.Vehicle;
 
 import java.io.Serializable;
 
@@ -30,12 +30,12 @@ public class TraceEvent implements Serializable {
 		/**
 		 * The start vertex of the current search.
 		 */
-		private final ENGVertex start;
+		private final Vertex start;
 
 		/**
 		 * The destination vertex of the current search.
 		 */
-		private final ENGVertex destination;
+		private final Vertex destination;
 
 		/**
 		 * The vehicle to be used for routing.
@@ -52,7 +52,7 @@ public class TraceEvent implements Serializable {
 		 * @param vehicle
 		 *            The vehicle.
 		 */
-		public SearchStartedEvent(ENGVertex start, ENGVertex destination,
+		public SearchStartedEvent(Vertex start, Vertex destination,
 				Vehicle vehicle) {
 			this.start = start;
 			this.destination = destination;
@@ -64,7 +64,7 @@ public class TraceEvent implements Serializable {
 		 * 
 		 * @return Start vertex.
 		 */
-		public ENGVertex getStart() {
+		public Vertex getStart() {
 			return start;
 		}
 
@@ -73,7 +73,7 @@ public class TraceEvent implements Serializable {
 		 * 
 		 * @return Destination vertex.
 		 */
-		public ENGVertex getDestination() {
+		public Vertex getDestination() {
 			return destination;
 		}
 
@@ -101,7 +101,7 @@ public class TraceEvent implements Serializable {
 		/**
 		 * The visited vertex.
 		 */
-		private final ENGVertex vertex;
+		private final Vertex vertex;
 
 		/**
 		 * The remaining queue size.
@@ -123,7 +123,7 @@ public class TraceEvent implements Serializable {
 		 * @param profileSize
 		 *            The size of the current profile.
 		 */
-		public VertexVisitedEvent(ENGVertex vertex, int remainingQueueSize,
+		public VertexVisitedEvent(Vertex vertex, int remainingQueueSize,
 				int profileSize) {
 			this.vertex = vertex;
 			this.remainingQueueSize = remainingQueueSize;
@@ -135,7 +135,7 @@ public class TraceEvent implements Serializable {
 		 * 
 		 * @return The visited vertex.
 		 */
-		public ENGVertex getVertex() {
+		public Vertex getVertex() {
 			return vertex;
 		}
 
@@ -171,7 +171,7 @@ public class TraceEvent implements Serializable {
 		/**
 		 * The enqueued vertex.
 		 */
-		private final ENGVertex vertex;
+		private final Vertex vertex;
 
 		/**
 		 * The label of the queue, the vertex is inserted into.
@@ -186,7 +186,7 @@ public class TraceEvent implements Serializable {
 		 * @param queue
 		 *            The queue.
 		 */
-		public VertexEnqueuedEvent(ENGVertex vertex, int queue) {
+		public VertexEnqueuedEvent(Vertex vertex, int queue) {
 			this.vertex = vertex;
 			this.queue = queue;
 		}
@@ -196,7 +196,7 @@ public class TraceEvent implements Serializable {
 		 * 
 		 * @return The enqueued vertex.
 		 */
-		public ENGVertex getVertex() {
+		public Vertex getVertex() {
 			return vertex;
 		}
 
@@ -225,7 +225,7 @@ public class TraceEvent implements Serializable {
 		/**
 		 * The path is the result of the algorithm.
 		 */
-		private final IPath<ENGVertex> path;
+		private final IPath<Vertex> path;
 
 		/**
 		 * The constructor takes the result of the routing algorithm.
@@ -233,7 +233,7 @@ public class TraceEvent implements Serializable {
 		 * @param path
 		 *            The path found by the algorithm.
 		 */
-		public PathFoundEvent(IPath<ENGVertex> path) {
+		public PathFoundEvent(IPath<Vertex> path) {
 			this.path = path;
 		}
 
@@ -242,7 +242,7 @@ public class TraceEvent implements Serializable {
 		 * 
 		 * @return The path.
 		 */
-		public IPath<ENGVertex> getPath() {
+		public IPath<Vertex> getPath() {
 			return path;
 		}
 	}

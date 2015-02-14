@@ -1,30 +1,20 @@
 package greennav.visualization.model;
 
-import greennav.model.computations.ComputationException;
-import greennav.model.computations.ComputationManager;
-import greennav.model.computations.instances.RoutingInstance;
-import greennav.model.computations.interfaces.HasPartialPreorderQueue;
-import greennav.model.computations.interfaces.Problem;
-import greennav.model.computations.interfaces.RoutingAlgorithm;
-import greennav.model.data.structs.ENGEdge;
-import greennav.model.data.structs.ENGVertex;
-import greennav.model.data.structs.Vehicle;
 import greennav.model.datastructures.partialpreorderqueue.IPartialPreorderQueue;
-import greennav.model.datastructures.partialpreorderqueue.IPartialPreorderQueueFactory;
-import greennav.model.datastructures.partialpreorderqueue.ObservedQueueFactory;
-import greennav.model.datastructures.partialpreorderqueue.QueueObserver;
-import greennav.model.modelling.graph.IPath;
 import greennav.model.modelling.order.IQueue;
-import greennav.model.statebased.algorithms.ProfileContractionHierarchies.CHVertex;
-import greennav.model.statebased.energy.EnergyProfile;
-import greennav.model.toolbox.Gobservable;
+import greennav.routing.algorithms.Dijkstra;
+import greennav.routing.algorithms.QueueFactory;
+import greennav.routing.data.Graph.Vertex;
+import greennav.routing.data.path.IPath;
+import greennav.routing.data.vehicle.Vehicle;
+import greennav.routing.server.Server;
 import greennav.visualization.data.TraceEvent;
-import greennav.visualization.data.TraceEvent.ExceptionThrownEvent;
 import greennav.visualization.data.TraceEvent.PathFoundEvent;
 import greennav.visualization.data.TraceEvent.SearchStartedEvent;
 import greennav.visualization.data.TraceEvent.VertexEnqueuedEvent;
 import greennav.visualization.data.TraceEvent.VertexVisitedEvent;
 import greennav.visualization.data.TraceObserver;
+import greennav.visualization.util.Gobservable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,17 +29,7 @@ public class RoutingRunner extends Gobservable<TraceObserver> implements
 	/**
 	 * The computation manager is used to invoke the routing algorithms.
 	 */
-	private ComputationManager computationManager;
-
-	/**
-	 * The identifier of the problem to be solved.
-	 */
-	private Problem problem;
-
-	/**
-	 * The identifier of the preferred algorithm to be solved.
-	 */
-	private String algorithm;
+	private Server server;
 
 	/**
 	 * The vehicle to be used for routing.
@@ -59,12 +39,12 @@ public class RoutingRunner extends Gobservable<TraceObserver> implements
 	/**
 	 * The start vertex.
 	 */
-	private ENGVertex start;
+	private Vertex start;
 
 	/**
 	 * The destination vertex.
 	 */
-	private ENGVertex destination;
+	private Vertex destination;
 
 	/**
 	 * Mapping queues to integers in order to provide a distinction for
@@ -79,8 +59,8 @@ public class RoutingRunner extends Gobservable<TraceObserver> implements
 	 * @param computationManager
 	 *            A computation manager.
 	 */
-	public RoutingRunner(ComputationManager computationManager) {
-		this.computationManager = computationManager;
+	public RoutingRunner(Server server) {
+		this.server = server;
 	}
 
 	/**
@@ -89,7 +69,7 @@ public class RoutingRunner extends Gobservable<TraceObserver> implements
 	 * @param start
 	 *            Start vertex.
 	 */
-	public void setStart(ENGVertex start) {
+	public void setStart(Vertex start) {
 		this.start = start;
 	}
 
@@ -99,7 +79,7 @@ public class RoutingRunner extends Gobservable<TraceObserver> implements
 	 * @param destination
 	 *            Destination vertex.
 	 */
-	public void setDestination(ENGVertex destination) {
+	public void setDestination(Vertex destination) {
 		this.destination = destination;
 	}
 
@@ -113,53 +93,11 @@ public class RoutingRunner extends Gobservable<TraceObserver> implements
 		this.vehicle = vehicle;
 	}
 
-	/**
-	 * Set the identifier of the problem to be solved.
-	 * 
-	 * @param problem
-	 *            The problem identifier.
-	 */
-	public void setProblem(Problem problem) {
-		this.problem = problem;
-	}
-
-	/**
-	 * Set the identifier of the preferred algorithm.
-	 * 
-	 * @param algorithm
-	 *            The identifier of the algorithm.
-	 */
-	public void setAlgorithm(String algorithm) {
-		this.algorithm = algorithm;
-	}
-
 	@SuppressWarnings("unchecked")
-	private void redecorate(
-			HasPartialPreorderQueue<ENGVertex, EnergyProfile<ENGVertex, ENGEdge>, IPartialPreorderQueueFactory<ENGVertex, EnergyProfile<ENGVertex, ENGEdge>, IPartialPreorderQueue<ENGVertex, EnergyProfile<ENGVertex, ENGEdge>>>> ppq) {
-		IPartialPreorderQueueFactory<ENGVertex, EnergyProfile<ENGVertex, ENGEdge>, ? extends IPartialPreorderQueue<ENGVertex, EnergyProfile<ENGVertex, ENGEdge>>> queueFactory = ppq
-				.getQueueFactory();
-		ObservedQueueFactory<ENGVertex, EnergyProfile<ENGVertex, ENGEdge>> x = null;
-		if (!(queueFactory instanceof ObservedQueueFactory)) {
-			x = new ObservedQueueFactory<ENGVertex, EnergyProfile<ENGVertex, ENGEdge>>(
-					queueFactory);
-		} else {
-			x = new ObservedQueueFactory<ENGVertex, EnergyProfile<ENGVertex, ENGEdge>>(
-					((ObservedQueueFactory<ENGVertex, EnergyProfile<ENGVertex, ENGEdge>>) queueFactory)
-							.getBase());
-		}
-		ppq.setQueueFactory(x);
+	private QueueFactory redecorate(QueueFactory qf) {
+		ObservedQueueFactory x = new ObservedQueueFactory(qf);
 		x.addObserver(this);
-	}
-
-	private void unregister(
-			HasPartialPreorderQueue<ENGVertex, EnergyProfile<ENGVertex, ENGEdge>, IPartialPreorderQueueFactory<ENGVertex, EnergyProfile<ENGVertex, ENGEdge>, IPartialPreorderQueue<ENGVertex, EnergyProfile<ENGVertex, ENGEdge>>>> ppq) {
-		IPartialPreorderQueueFactory<ENGVertex, EnergyProfile<ENGVertex, ENGEdge>, ? extends IPartialPreorderQueue<ENGVertex, EnergyProfile<ENGVertex, ENGEdge>>> queueFactory = ppq
-				.getQueueFactory();
-		ObservedQueueFactory<ENGVertex, EnergyProfile<ENGVertex, ENGEdge>> x = null;
-		if (queueFactory instanceof ObservedQueueFactory) {
-			((ObservedQueueFactory<ENGVertex, EnergyProfile<ENGVertex, ENGEdge>>) queueFactory)
-					.deleteObserver(this);
-		}
+		return qf;
 	}
 
 	/**
@@ -171,67 +109,43 @@ public class RoutingRunner extends Gobservable<TraceObserver> implements
 	public void run() {
 		TraceEvent event;
 		queueLabeling.clear();
-		RoutingAlgorithm alg = null;
-		try {
-			alg = computationManager.getAlgorithm(RoutingAlgorithm.class,
-					algorithm, problem);
-		} catch (ComputationException exc) {
-			event = new ExceptionThrownEvent(exc);
-			for (TraceObserver observer : this)
-				observer.traceEvent(event);
-		}
 
-		if (alg instanceof HasPartialPreorderQueue) {
-			// redecorate((HasPartialPreorderQueue<ENGVertex,
-			// EnergyProfile<ENGVertex, ENGEdge>>) alg);
-		}
+		QueueFactory qf = QueueFactory.getDefault();
+
+		qf = redecorate(qf);
 
 		event = new SearchStartedEvent(start, destination, vehicle);
+
+		Dijkstra d = new Dijkstra(server.graph, qf);
+
 		for (TraceObserver observer : this)
 			observer.traceEvent(event);
-		RoutingInstance instance = new RoutingInstance(vehicle, vehicle
-				.getType().getCapacity(), start, destination);
-		IPath<ENGVertex> result = null;
-		try {
-			result = computationManager.getAlgorithm(RoutingAlgorithm.class,
-					algorithm, problem).route(instance);
-		} catch (ComputationException exc) {
-			event = new ExceptionThrownEvent(exc);
-			for (TraceObserver observer : this)
-				observer.traceEvent(event);
-		}
+		IPath<Vertex> result = null;
+
+		result = d.route(start, destination);
+
 		if (result != null) {
 			event = new PathFoundEvent(result);
 			for (TraceObserver observer : this)
 				observer.traceEvent(event);
 		}
 
-		if (alg instanceof HasPartialPreorderQueue) {
-			// unregister((HasPartialPreorderQueue<ENGVertex,
-			// EnergyProfile<ENGVertex, ENGEdge>>) alg);
-		}
 	}
 
-	public void front(Object queue, Object front) {
-		if (front instanceof EnergyProfile<?, ?>) {
-			System.out.println(((EnergyProfile) front).getEnergyFunction()
-					.getFunction().getSize());
-		}
-		// TODO: implement
+	@Override
+	public void failed(Object queue) {
+		// TODO Auto-generated method stub
+
 	}
 
 	public void insert(Object queue, Object key, Object value) {
-		if (key instanceof CHVertex) {
-			key = ((CHVertex<ENGVertex, EnergyProfile<ENGVertex, ENGEdge>>) key).base;
-		}
-		if (key instanceof ENGVertex) {
+		if (key instanceof Vertex) {
 			Integer i = queueLabeling.get(queue);
 			if (i == null) {
 				i = queueLabeling.size();
 				queueLabeling.put(queue, queueLabeling.size());
 			}
-			VertexEnqueuedEvent event = new VertexEnqueuedEvent(
-					(ENGVertex) key, i);
+			VertexEnqueuedEvent event = new VertexEnqueuedEvent((Vertex) key, i);
 			for (TraceObserver observer : this)
 				observer.traceEvent(event);
 		} else {
@@ -245,22 +159,14 @@ public class RoutingRunner extends Gobservable<TraceObserver> implements
 	 * and sent via a <code>VertexVisitedEvent</code>.
 	 */
 	public void pull(Object queue, Object key, Object value) {
-		if (key instanceof CHVertex) {
-			key = ((CHVertex<ENGVertex, EnergyProfile<ENGVertex, ENGEdge>>) key).base;
-		}
-		if (key instanceof ENGVertex) {
+		if (key instanceof Vertex) {
 			int v = 1;
-			if (value instanceof EnergyProfile<?, ?>) {
-				EnergyProfile<ENGVertex, ENGEdge> profile = (EnergyProfile<ENGVertex, ENGEdge>) value;
-				v = profile.getEnergyFunction().getFunction().getSize();
-			}
-
 			int size = 0;
 			if (queue instanceof IPartialPreorderQueue<?, ?>)
 				size = ((IPartialPreorderQueue<?, ?>) queue).getSize();
 			else if (queue instanceof IQueue<?>)
 				size = ((IQueue<?>) queue).size();
-			VertexVisitedEvent event = new VertexVisitedEvent((ENGVertex) key,
+			VertexVisitedEvent event = new VertexVisitedEvent((Vertex) key,
 					size, v);
 			for (TraceObserver observer : this)
 				observer.traceEvent(event);
@@ -271,11 +177,9 @@ public class RoutingRunner extends Gobservable<TraceObserver> implements
 	}
 
 	@Override
-	public void failed(IPartialPreorderQueue<?, ?> queue) {
-		TraceEvent event = new ExceptionThrownEvent(new Exception(
-				"something happened with the algorithm"));
-		for (TraceObserver observer : this)
-			observer.traceEvent(event);
+	public void front(Object arg0, Object arg1) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

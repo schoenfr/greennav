@@ -1,8 +1,6 @@
 package greennav.visualization;
 
-import greennav.model.computations.ComputationManager;
-import greennav.model.data.DataManager;
-import greennav.model.data.GraphManager;
+import greennav.routing.server.Server;
 import greennav.visualization.controller.Controller;
 import greennav.visualization.model.Model;
 import greennav.visualization.view.View;
@@ -29,12 +27,10 @@ public class Visualization {
 		view.getStatusBarThread().setStatus("Loading Data", true);
 
 		// Load data and create computation manager
-		DataManager dataManager = new DataManager(new GraphManager());
-		ComputationManager computationManager = new ComputationManager(
-				dataManager);
+		Server server = new Server();
 
 		// Connect model with computation manager
-		model.setComputationManager(computationManager);
+		model.setServer(server);
 
 		// Stop loading status
 		view.getStatusBarThread().interrupt();

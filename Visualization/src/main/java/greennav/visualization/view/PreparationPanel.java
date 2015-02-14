@@ -1,9 +1,7 @@
 package greennav.visualization.view;
 
-import greennav.model.computations.ComputationManager;
-import greennav.model.computations.interfaces.Algorithm;
 import greennav.model.computations.interfaces.Problem;
-import greennav.model.computations.interfaces.RoutingAlgorithm;
+import greennav.routing.server.Server;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -118,11 +116,10 @@ public class PreparationPanel extends JPanel {
 		setOpaque(false);
 	}
 
-	public void managerSet(ComputationManager computationManager) {
+	public void managerSet(Server server) {
 		// cardLayout.show(controlPanel, model.getState().toString());
 		problemComboBox.removeAllItems();
-		Collection<Problem> problems = computationManager.getProblems();
-		List<Problem> sortedProblems = new ArrayList<>(problems);
+		List<Problem> sortedProblems = new ArrayList<>();
 		Collections.sort(sortedProblems, new Comparator<Problem>() {
 			public int compare(Problem o1, Problem o2) {
 				return o1.getIdentifier().compareTo(o2.getIdentifier());
@@ -135,18 +132,11 @@ public class PreparationPanel extends JPanel {
 
 	public void problemSet(Problem problem) {
 		algorithmComboBox.removeAllItems();
-		Collection<Algorithm> algorithms = parent.getModel()
-				.getComputationManager().getAlgorithms(problem);
-		List<Algorithm> sortedAlgorithms = new ArrayList<>(algorithms);
-		Collections.sort(sortedAlgorithms, new Comparator<Algorithm>() {
-			public int compare(Algorithm o1, Algorithm o2) {
-				return o1.getIdentifier().compareTo(o2.getIdentifier());
-			}
-		});
-		for (Algorithm alg : sortedAlgorithms) {
-			if (alg instanceof RoutingAlgorithm) {
-				algorithmComboBox.addItem(alg.getIdentifier());
-			}
+		Collection<String> algorithms = parent.getModel().getServer()
+				.getAlgorithmList();
+		List<String> sortedAlgorithms = new ArrayList<>(algorithms);
+		for (String alg : sortedAlgorithms) {
+			algorithmComboBox.addItem(alg);
 		}
 	}
 

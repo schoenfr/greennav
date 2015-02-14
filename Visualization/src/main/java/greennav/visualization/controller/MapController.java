@@ -2,8 +2,8 @@ package greennav.visualization.controller;
 
 import greennav.mapviewer.controller.DefaultMapController;
 import greennav.mapviewer.structures.XY;
-import greennav.model.data.structs.ENGVertex;
 import greennav.osmosis.structs.LatLon;
+import greennav.routing.data.Graph.Vertex;
 
 import java.awt.event.MouseEvent;
 import java.util.Locale;
@@ -46,8 +46,8 @@ public class MapController extends DefaultMapController {
 	public void mouseClicked(MouseEvent e) {
 		LatLon request = parent.getView().getObservationMap().getMercator()
 				.mousePointToLatlon(new XY(e.getPoint()));
-		ENGVertex vertex = parent.getModel().getDataManager().getGraphManager()
-				.getNodeMatcher().getNearestVertex(request);
+		Vertex vertex = parent.getModel().getServer().graph.getVertexByLatLon(
+				request.getLatitude(), request.getLongitude());
 		if (vertex != null) {
 			if (parent.isChoosingStart()) {
 				parent.getModel().setStart(vertex);

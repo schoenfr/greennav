@@ -39,7 +39,7 @@ public class PreparationItemChangeListener implements ItemListener {
 		String item = (String) e.getItem();
 		if (e.getSource().equals(
 				parent.getView().getPreparationPanel().getProblemComboBox())) {
-			parent.getModel().setProblem(item);
+//			parent.getModel().setProblem(item);
 		} else if (e.getSource().equals(
 				parent.getView().getPreparationPanel().getAlgorithmComboBox())) {
 			parent.getModel().setAlgorithm(item);

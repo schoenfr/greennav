@@ -1,7 +1,7 @@
 package greennav.visualization.view;
 
-import greennav.model.computations.ComputationManager;
 import greennav.model.computations.interfaces.Problem;
+import greennav.routing.server.Server;
 import greennav.visualization.data.TraceEvent;
 import greennav.visualization.data.TraceEvent.ExceptionThrownEvent;
 import greennav.visualization.images.VisualizationImages;
@@ -235,9 +235,9 @@ public class View extends JFrame implements IView {
 	}
 
 	@Override
-	public void managerSet(ComputationManager computationManager) {
+	public void managerSet(Server server) {
 		cardLayout.show(controlPanel, model.getState().toString());
-		preparationPanel.managerSet(computationManager);
+		preparationPanel.managerSet(server);
 	}
 
 	@Override

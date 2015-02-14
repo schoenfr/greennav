@@ -1,7 +1,7 @@
 package greennav.visualization.controller;
 
-import greennav.model.data.structs.ENGVertex;
 import greennav.osmosis.structs.LatLon;
+import greennav.routing.data.Graph.Vertex;
 import greennav.visualization.view.PreparationPanel;
 
 import java.awt.event.ActionEvent;
@@ -52,9 +52,8 @@ public class ChooseVertexController implements ActionListener {
 			double lat = Double.valueOf(components[0]);
 			double lon = Double.valueOf(components[1]);
 			LatLon request = new LatLon(lat, lon);
-			ENGVertex vertex = parent.getModel().getDataManager()
-					.getGraphManager().getNodeMatcher()
-					.getNearestVertex(request);
+			Vertex vertex = parent.getModel().getServer().graph
+					.getVertexByLatLon(lat, lon);
 			if (vertex != null) {
 				parent.getModel().setStart(vertex);
 				parent.setChoosingStart(false);
@@ -83,9 +82,8 @@ public class ChooseVertexController implements ActionListener {
 			double lat = Double.valueOf(components[0]);
 			double lon = Double.valueOf(components[1]);
 			LatLon request = new LatLon(lat, lon);
-			ENGVertex vertex = parent.getModel().getDataManager()
-					.getGraphManager().getNodeMatcher()
-					.getNearestVertex(request);
+			Vertex vertex = parent.getModel().getServer().graph
+					.getVertexByLatLon(lat, lon);
 			if (vertex != null) {
 				parent.getModel().setDestination(vertex);
 				parent.setChoosingDestination(false);
