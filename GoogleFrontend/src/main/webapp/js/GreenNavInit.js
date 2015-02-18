@@ -93,6 +93,17 @@ var initStates = {
 	}
 };
 
+function getUrlParameter(sParam) {
+	var sPageURL = window.location.search.substring(1);
+	var sURLVariables = sPageURL.split('&');
+	for (var i = 0; i < sURLVariables.length; i++) {
+		var sParameterName = sURLVariables[i].split('=');
+		if (sParameterName[0] == sParam) {
+			return sParameterName[1];
+		}
+	}
+};
+
 /*
  * GreenNav namespace: The namespace dictionary contains the following
  * functions: calculate_route, calculate_range, send_request. These functions
@@ -116,7 +127,7 @@ $(document).ready(
 
                         GreenNav.log('Init Log:');
                         
-			GreenNav.server = "http://localhost:8111";			
+			GreenNav.server = "https://greennav.isp.uni-luebeck.de";		
 
 			// Initialize the map
 			var options = {
@@ -217,19 +228,32 @@ $(document).ready(
 			$('#bg, .close_dialog').click(function() {
 				$('#bg, .dialog').hide();
 			});
-			GreenNav.readVehicles();                        
+			$.when(GreenNav.readVehicles()).done(function () {
+				// Check for GET variables for predefined request
+				var from = getUrlParameter('from');
+				var to = getUrlParameter('to');
+				var vehicle = getUrlParameter('vehicle');
+				var battery = getUrlParameter('battery');
+				$('#route_start > input').eq(0).val(from);
+				$('#route_dest > input').eq(0).val(to);
+				$('#route_vehicle_type').val(vehicle);
+				$('#route_energy').val(battery);
+				if (from != null) {
+					GreenNav.calculateRoute();
+				}
+			});
         
                         /********************************
                          * FOOLING AROUND
                          */
                         
                         //GreenNav.server
-                        var server = "http://localhost:8111"+"/greennav/vehicles";
-                        GreenNav.log("Server: "+server);
+                        var serveraddr = GreenNav.server+"/greennav/vehicles";
+                        GreenNav.log("Server: "+serveraddr);
                         $.ajax(        
                                 {
                                         type : "GET",
-                                        url :  server,
+                                        url :  serveraddr,
                                         dataType : "json",
                                         error : function(xhr, textStatus, errorThrown) {        
                                             GreenNav.log(" -No connection to the server!");},
@@ -247,7 +271,7 @@ $(document).ready(
 GreenNav.readVehicles = function() {
 	GreenNav.log('Init: Start to read vehicles<br />');
 	GreenNav.log(GreenNav.server + "/greennav/vehicles");
-	GreenNav.get(GreenNav.server + "/greennav/vehicles", function(data) {
+	return GreenNav.get(GreenNav.server + "/greennav/vehicles", function(data) {
 		$("#route_vehicle_type").empty();
 		for (var i = 0; i < data.length; i++) {
 			var vhc = data[i];

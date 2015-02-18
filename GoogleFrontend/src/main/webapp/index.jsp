@@ -63,17 +63,17 @@
 
                         <div id="options">
                             Fahrzeug: <select id="route_vehicle_type" size="1">
-                                <option>Smart Roadster</option>
-                            </select> <br /> <br /> Optimierung: <select id="route_optimization"
+                            </select> <br /> <br />
+                            <span style="visibility: hidden;">Optimierung: <select id="route_optimization"
                                                                          size="1">
                                 <option>ENERGY</option>
                                 <option>DISTANCE</option>
                                 <option>TIME</option>
-                            </select> <br /> <br /> Energiestand: <input id="route_energy"
+                            </select></span> <br /> <br /> Energiestand: <input id="route_energy"
                                                                          type="text" size="6" class="inputfield" /> %
                         </div>  
 
-                        <label class="checkbox-label">
+                        <label class="checkbox-label" style="	visibility: hidden;">
                             <input type="checkbox" id="chargingStations" value="Aufladestationen verwenden"/>
                             <span>Aufladestationen verwenden</span>
                         </label>
@@ -94,12 +94,6 @@
 
                         <div id="options">
                             Fahrzeug: <select id="range_vehicle_type" size="1">
-                                <option>Karabag Fiat 500E</option>
-                                <option>Sam</option>
-                                <option>STROMOS</option>
-                                <option>Luis</option>
-                                <option>SmartRoadster</option>
-                                <option>MUTE</option>
                             </select> <br /> <br /> Energiestand: <input id="range_energy"
                                                                          type="text" size="6" class="inputfield" /> %
                         </div>

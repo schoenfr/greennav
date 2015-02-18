@@ -62,6 +62,7 @@ GreenNav.states.translationDestination = {
         GreenNav.geocoder.geocode(targetNodeAddress, function (results, status) {
             if (status === google.maps.GeocoderStatus.OK) {
                 GreenNav.states.translationDestination.resolved = results[0].geometry.location;
+                GreenNav.map.setCenter(results[0].geometry.location);
                 GreenNav.log(
                         'Route: Resolved second address to<br />'
                         + results[0].geometry.location + '<br />');
@@ -286,13 +287,17 @@ GreenNav.states.routeGreenNavServer = {
         //var opt = $('#route_optimization').val().toLowerCase();
         var requestEnergy = GreenNav.server + "/greennav/vehicles/" + vehicle
                 + "/routes/" + from * 1 + "-" + to + "/opt/" + "energy" + "?battery="
-                + battery + "&turns=true";
+                + battery + "&turns=true&algorithm=EnergyAStar";
         var requestShortest = GreenNav.server + "/greennav/vehicles/" + vehicle
                 + "/routes/" + from * 1 + "-" + to + "/opt/" + "distance" + "?battery="
                 + battery + "&turns=true";
         var requestFastest = GreenNav.server + "/greennav/vehicles/" + vehicle
                 + "/routes/" + from * 1 + "-" + to + "/opt/" + "time" + "?battery="
                 + battery + "&turns=true";
+
+	GreenNav.log(requestEnergy);
+	GreenNav.log(requestShortest);
+	GreenNav.log(requestFastest);
 
         function callbackEnergy(data) {
             var answer = data;
@@ -313,11 +318,11 @@ GreenNav.states.routeGreenNavServer = {
             GreenNav.states.routeGreenNavServer.fastestPath = GreenNav.mk_path(answer.route, 'red', "Schnellste Route");
         }
 
-        GreenNav.log("<a href=\"" + requestEnergy + "\">Time link</a>");
+        GreenNav.log("<a href=\"" + requestEnergy + "\">Energy link</a>");
         var ajax1 = GreenNav.get(requestEnergy, callbackEnergy);
         GreenNav.log("<a href=\"" + requestShortest + "\">Time link</a>");
         var ajax2 = GreenNav.get(requestShortest, callbackShortest);
-        GreenNav.log("<a href=\"" + requestFastest + "\">Time link</a>");
+        GreenNav.log("<a href=\"" + requestFastest + "\">Distance link</a>");
         var ajax3 = GreenNav.get(requestFastest, callbackFastest);
 
         $.when(ajax1, ajax2, ajax3).done(function () {
