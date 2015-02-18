@@ -18,11 +18,15 @@ import greennav.visualization.view.shapes.CursoredMarkerList;
 import greennav.visualization.view.shapes.VertexMarker;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 
 public class ObservationMap extends JMapViewer implements TraceObserver {
@@ -86,6 +90,10 @@ public class ObservationMap extends JMapViewer implements TraceObserver {
 	private static final Color[] colors = new Color[] { Color.BLUE,
 			Color.GREEN, Color.CYAN, Color.MAGENTA };
 
+	private int skips = 1000;
+	private int i = 0;
+	private String prefix = "pic";
+
 	public ObservationMap(View parent) {
 		this.parent = parent;
 
@@ -95,12 +103,25 @@ public class ObservationMap extends JMapViewer implements TraceObserver {
 
 	@Override
 	public void traceEvent(final TraceEvent message) {
+		final JMapViewer m = this;
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				if (message != null) {
+					if (i++ % skips == 0) {
+						BufferedImage im = new BufferedImage(m.getWidth(), m
+								.getHeight(), BufferedImage.TYPE_INT_ARGB);
+						m.paint(im.getGraphics());
+						try {
+							ImageIO.write(im, "PNG", new File(prefix
+									+ (i / skips) + ".png"));
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
 					if (message instanceof SearchStartedEvent) {
 						path.clear();
+						i = 0;
 					} else if (message instanceof VertexVisitedEvent) {
 						VertexVisitedEvent event = (VertexVisitedEvent) message;
 						shapes.add(new VertexMarker(new LatLon(event
@@ -128,6 +149,15 @@ public class ObservationMap extends JMapViewer implements TraceObserver {
 								routeLineShapes.add(m);
 							}
 							showRoute(true);
+						}
+						BufferedImage im = new BufferedImage(m.getWidth(), m
+								.getHeight(), BufferedImage.TYPE_INT_ARGB);
+						m.paint(im.getGraphics());
+						try {
+							ImageIO.write(im, "PNG", new File(prefix
+									+ "final.png"));
+						} catch (IOException e) {
+							e.printStackTrace();
 						}
 					}
 				}

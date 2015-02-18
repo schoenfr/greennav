@@ -1,5 +1,6 @@
 package greennav.visualization.model;
 
+import greennav.routing.algorithms.AStar;
 import greennav.routing.algorithms.Dijkstra;
 import greennav.routing.data.Graph.Vertex;
 import greennav.routing.data.path.IPath;
@@ -104,6 +105,8 @@ public class RoutingRunner extends Gobservable<TraceObserver> implements
 		return x;
 	}
 
+	int i = 0;
+
 	/**
 	 * The run method invokes the routing algorithm and observes its behavior
 	 * via aspects. If no appropriate aspect was found, a runtime exception is
@@ -120,13 +123,23 @@ public class RoutingRunner extends Gobservable<TraceObserver> implements
 
 		event = new SearchStartedEvent(start, destination, vehicle);
 
-		Dijkstra d = new Dijkstra(server.graph, qf);
-
-		for (TraceObserver observer : this)
-			observer.traceEvent(event);
 		IPath<Vertex> result = null;
+		if (i++ % 2 == 0) {
+			Dijkstra d = new Dijkstra(server.graph, qf);
 
-		result = d.route(start, destination);
+			for (TraceObserver observer : this)
+				observer.traceEvent(event);
+
+			result = d.route(start, destination);
+		} else {
+			AStar d = new AStar(server.graph, qf);
+
+			for (TraceObserver observer : this)
+				observer.traceEvent(event);
+
+			result = d.route(start, destination);
+
+		}
 
 		if (result != null) {
 			event = new PathFoundEvent(result);
