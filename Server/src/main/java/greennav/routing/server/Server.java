@@ -61,7 +61,9 @@ public class Server {
 			return null;
 		// TODO: Consider parameters
 
-		IPath<Vertex> path = new Dijkstra(graph,
+		IPath<Vertex> path = null;
+
+		path = new Dijkstra(graph,
 				new PartialPreorderTreeFactory<Vertex, Double>()).route(x, y);
 
 		RoutingResponse rp = new RoutingResponse();
