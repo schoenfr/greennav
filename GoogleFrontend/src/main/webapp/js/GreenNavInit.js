@@ -277,6 +277,11 @@ GreenNav.readVehicles = function() {
 			var vhc = data[i];
 			$("<option/>").val(vhc).text(vhc).appendTo("#route_vehicle_type");
 		}
+		$("#range_vehicle_type").empty();
+		for (var i = 0; i < data.length; i++) {
+			var vhc = data[i];
+			$("<option/>").val(vhc).text(vhc).appendTo("#range_vehicle_type");
+		}
 		GreenNav.log('Init: Read ' + data.length + ' vehicles<br />');
 	});
 };

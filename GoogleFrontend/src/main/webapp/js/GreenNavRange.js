@@ -22,6 +22,7 @@ GreenNav.states.range1 = {
 		GreenNav.geocoder.geocode(startNodeAddress, function(results, status) {
 			if (status === google.maps.GeocoderStatus.OK) {
 				GreenNav.states.range1.resolved = results[0].geometry.location;
+				GreenNav.map.setCenter(results[0].geometry.location);
 				$('#log').before(
 						'Range: Resolved address to<br />'
 						+ results[0].geometry.location + '<br />');
